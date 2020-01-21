@@ -1,8 +1,16 @@
-document.getElementById("app").innerHTML = `
-<h1>Hello Parcel!</h1>
-<div>
-  Look
-  <a href="https://parceljs.org" target="_blank" rel="noopener noreferrer">here</a>
-  for more info about Parcel.
-</div>
-`;
+import Vuex from '../src'
+
+const store = new Vuex.Store({
+  state: {
+    count: 0
+  },
+  mutations: {
+    increment (state) {
+      state.count++
+    }
+  }
+})
+
+store.commit('increment')
+
+console.log(store.state.count) // -> 1
