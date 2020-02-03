@@ -1,11 +1,12 @@
 import { vuexOptions } from '../@types';
 
 export class Store {
-  public state: any = {}
+  public state: any;
   constructor(options: vuexOptions) {
+    const initState = options.state
   }
 
-  commit(method: string) {
+  commit(type: string) {
 
   }
 }
