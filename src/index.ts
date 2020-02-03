@@ -1,5 +1,7 @@
-import {Store} from './class/store';
+import { Store } from './class/store';
+import { install } from './install';
 
 export default {
-  Store
+  Store,
+  install,
 };

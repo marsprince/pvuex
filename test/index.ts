@@ -1,5 +1,5 @@
-// import Vuex from '../src'
-import Vuex from 'vuex'
+import Vuex from '../src'
+// import Vuex from 'vuex'
 import Vue from  'vue'
 
 Vue.use(Vuex)
