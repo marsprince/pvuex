@@ -22,6 +22,7 @@ export class Store {
     this.initMutations(options)
   }
 
+  // commit and mutations
   commit(type: string, payload?: any) {
     const entry = this._mutations[type]
     if(entry && entry.length!== 0) {
@@ -43,6 +44,8 @@ export class Store {
       handler.call(this, this.state, payload)
     })
   }
+
+  // actions and dispatch
 
   get state() {
     return this._vm._data.$$state

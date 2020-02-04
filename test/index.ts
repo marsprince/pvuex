@@ -1,20 +1,63 @@
 import Vuex from '../src'
 // import Vuex from 'vuex'
-import Vue from  'vue'
+import Vue from  'vue/dist/vue'
 
 Vue.use(Vuex)
 
-const store = new Vuex.Store({
-  state: {
-    count: 0
-  },
-  mutations: {
-    increment (state) {
-      state.count++
+// base use
+function baseUse() {
+  const store = new Vuex.Store({
+    state: {
+      count: 0
+    },
+    mutations: {
+      increment (state) {
+        state.count++
+      }
     }
-  }
-})
+  })
 
-store.commit('increment')
+  store.commit('increment')
 
-console.log(store.state.count) // -> 1
+  console.log(store.state.count) // -> 1
+}
+
+function baseCounter() {
+  const store = new Vuex.Store({
+    state: {
+      count: 0
+    },
+    mutations: {
+      increment: state => state.count++,
+      decrement: state => state.count--
+    }
+  })
+
+  new Vue({
+    el: '#app',
+    store,
+    template: '<div id="app">\n' +
+      '  <p>{{ count }}</p>\n' +
+      '  <p>\n' +
+      '    <button @click="increment">+</button>\n' +
+      '    <button @click="decrement">-</button>\n' +
+      '  </p>\n' +
+      '</div>',
+    computed: {
+      count () {
+        return this.$store.state.count
+      }
+    },
+    methods: {
+      increment () {
+        this.$store.commit('increment')
+      },
+      decrement () {
+        this.$store.commit('decrement')
+      }
+    }
+  })
+}
+
+baseCounter()
+
