@@ -1,37 +1,37 @@
-import Vuex from '../src'
+import Vuex from '../src';
 // import Vuex from 'vuex'
-import Vue from  'vue/dist/vue'
+import Vue from 'vue/dist/vue';
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 // base use
 function baseUse() {
   const store = new Vuex.Store({
     state: {
-      count: 0
+      count: 0,
     },
     mutations: {
-      increment (state) {
-        state.count++
-      }
-    }
-  })
+      increment(state) {
+        state.count++;
+      },
+    },
+  });
 
-  store.commit('increment')
+  store.commit('increment');
 
-  console.log(store.state.count) // -> 1
+  console.log(store.state.count); // -> 1
 }
 
 function baseCounter() {
   const store = new Vuex.Store({
     state: {
-      count: 0
+      count: 0,
     },
     mutations: {
       increment: state => state.count++,
-      decrement: state => state.count--
-    }
-  })
+      decrement: state => state.count--,
+    },
+  });
 
   new Vue({
     el: '#app',
@@ -44,20 +44,42 @@ function baseCounter() {
       '  </p>\n' +
       '</div>',
     computed: {
-      count () {
-        return this.$store.state.count
-      }
+      count() {
+        return this.$store.state.count;
+      },
     },
     methods: {
-      increment () {
-        this.$store.commit('increment')
+      increment() {
+        this.$store.commit('increment');
       },
-      decrement () {
-        this.$store.commit('decrement')
-      }
-    }
-  })
+      decrement() {
+        this.$store.commit('decrement');
+      },
+    },
+  });
 }
 
-baseCounter()
+function baseAction() {
+  const store = new Vuex.Store({
+    state: {
+      count: 0,
+    },
+    mutations: {
+      increment(state) {
+        state.count++;
+      },
+    },
+    actions: {
+      increment() {
+        this.commit('increment');
+      },
+    },
+  });
+
+  store.dispatch('increment');
+
+  console.log(store.state.count); // -> 1
+}
+
+baseAction();
 
