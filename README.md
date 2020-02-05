@@ -9,3 +9,9 @@
 1._vm 是新建的vue，这样当你使用$store的时候，就自动建立了响应式关系，你的组件里实际上是受_vm控制的，这里实际把vue当成了单纯的响应式数据
 
 2.为什么有actions和mutations的区别？只是为了达到快照功能呢，即所谓的时间旅行，可以回到任意状态，所以每一步必须都记录下来。当然你可以在Mutations里写ajax，但是状态就无法追溯了。
+
+3.Module是最重要的概念：
+
+在使用module后，state是默认挂载到对应的module下的，我们在mutations里得到的是模块的局部对象，commit也是局部的
+
+但是actions, mutations却是挂到全局的

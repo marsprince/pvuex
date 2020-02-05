@@ -3,5 +3,7 @@ export interface vuexOptions {
   // the only way to change state
   mutations?: any
   actions?: any
+  modules?: any
+
   vue?: any
 }

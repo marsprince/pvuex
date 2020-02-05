@@ -1,5 +1,5 @@
-import Vuex from '../src';
-// import Vuex from 'vuex'
+// import Vuex from '../src';
+import Vuex from 'vuex'
 import Vue from 'vue/dist/vue';
 
 Vue.use(Vuex);
@@ -81,5 +81,36 @@ function baseAction() {
   console.log(store.state.count); // -> 1
 }
 
-baseAction();
+function baseModules() {
+  const store = new Vuex.Store({
+    modules: {
+      a: {
+        state: {
+          aCount: 222
+        },
+        modules: {
+          b: {
+            state: {
+              bCount: 333
+            }
+          }
+        }
+      },
+    },
+    state: {
+      count: 0,
+    },
+    mutations: {
+      increment(state) {
+        state.count++;
+      },
+    },
+  });
+
+  store.commit('increment');
+
+  console.log(store.state); // -> 1
+}
+
+baseModules();
 

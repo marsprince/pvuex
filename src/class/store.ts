@@ -1,23 +1,33 @@
 import { vuexOptions } from '../@types';
 import { Vue } from '../install';
+import Module from './module';
 
 export class Store {
   public vue: any;
   private _state: any;
   private _mutations = Object.create(null);
-  private _actions =  Object.create(null);
+  private _actions = Object.create(null);
+  private _modules = Object.create(null);
 
   constructor(options: vuexOptions) {
     // vue.use(vuex) must call
     // 强耦合vue
     this.vue = Vue || options.vue;
+    // initModules
+    if (options.modules) this.initModules(options.modules)
     // the root of state
     const state = options.state;
     // 使用observable替换vm
     this._state = this.vue.observable(state);
     // init mutations
-    if(options.mutations) this.initMutations(options.mutations);
-    if(options.actions) this.initActions(options.actions)
+    if (options.mutations) this.initMutations(options.mutations);
+    if (options.actions) this.initActions(options.actions);
+  }
+
+  initModules(modules) {
+    Object.keys(modules).forEach(key => {
+      this._modules[key] = new Module(modules[key])
+    })
   }
 
   // commit and mutations
