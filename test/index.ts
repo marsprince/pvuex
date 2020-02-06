@@ -1,5 +1,5 @@
-// import Vuex from '../src';
-import Vuex from 'vuex'
+import Vuex from '../src';
+// import Vuex from 'vuex'
 import Vue from 'vue/dist/vue';
 
 Vue.use(Vuex);
@@ -107,9 +107,9 @@ function baseModules() {
     },
   });
 
-  store.commit('increment');
+  // store.commit('increment');
 
-  console.log(store.state); // -> 1
+  console.log(store); // -> 1
 }
 
 baseModules();

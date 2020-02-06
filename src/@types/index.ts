@@ -6,4 +6,6 @@ export interface vuexOptions {
   modules?: any
 
   vue?: any
+
+  _parentState?: any
 }

@@ -1,33 +1,56 @@
 import { vuexOptions } from '../@types';
 import { Vue } from '../install';
-import Module from './module';
+
+let rootStore = null;
 
 export class Store {
-  public vue: any;
   private _state: any;
   private _mutations = Object.create(null);
   private _actions = Object.create(null);
   private _modules = Object.create(null);
+  public $parent;
+  public namespace;
+  public namespaceKey;
+  public isRoot: boolean = false
 
-  constructor(options: vuexOptions) {
+  constructor(options: vuexOptions, parentStore?: Store, namespaceKey?: string) {
+    rootStore = rootStore || this;
+    // initChild
+    if (parentStore && namespaceKey) {
+      this.$parent = parentStore;
+      this.namespaceKey = namespaceKey;
+      const parentNameSpace = parentStore.namespace;
+      this.namespace = parentNameSpace ? `${parentNameSpace}/${namespaceKey}` : namespaceKey;
+    } else {
+      this.isRoot = true
+    }
     // vue.use(vuex) must call
-    // 强耦合vue
-    this.vue = Vue || options.vue;
+    // 强耦合了vue
+    // the root of state, current state
+    if (options.state) this.initState(options);
     // initModules
-    if (options.modules) this.initModules(options.modules)
-    // the root of state
-    const state = options.state;
-    // 使用observable替换vm
-    this._state = this.vue.observable(state);
+    if (options.modules) this.initModules(options);
     // init mutations
     if (options.mutations) this.initMutations(options.mutations);
     if (options.actions) this.initActions(options.actions);
   }
 
-  initModules(modules) {
+  initState(options: vuexOptions) {
+    const state = options.state;
+    // 使用observable替换vm
+    // localState
+    this._state = Vue.observable(state);
+    if (!this.isRoot) {
+      Vue.set(this.$parent.state, this.namespaceKey, this._state);
+    }
+  }
+
+  initModules(options: vuexOptions) {
+    const modules = options.modules;
+    // connect state from parent to child
     Object.keys(modules).forEach(key => {
-      this._modules[key] = new Module(modules[key])
-    })
+      this._modules[key] = new Store(modules[key], this, key);
+    });
   }
 
   // commit and mutations
