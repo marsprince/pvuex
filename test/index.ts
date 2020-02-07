@@ -85,13 +85,21 @@ function baseModules() {
   const store = new Vuex.Store({
     modules: {
       a: {
+        namespaced: true,
+        mutations: {
+          increment(state) {
+            // local state
+            console.log(state);
+            state.count++;
+          },
+        },
         state: {
-          aCount: 222
+          count: 222
         },
         modules: {
           b: {
             state: {
-              bCount: 333
+              count: 333
             }
           }
         }
@@ -100,14 +108,9 @@ function baseModules() {
     state: {
       count: 0,
     },
-    mutations: {
-      increment(state) {
-        state.count++;
-      },
-    },
   });
 
-  // store.commit('increment');
+  store.commit('a/increment');
 
   console.log(store); // -> 1
 }

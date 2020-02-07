@@ -4,6 +4,7 @@ export interface vuexOptions {
   mutations?: any
   actions?: any
   modules?: any
+  namespaced?: boolean
 
   vue?: any
 
