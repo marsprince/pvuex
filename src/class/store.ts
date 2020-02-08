@@ -32,7 +32,7 @@ export class Store {
     if (options.modules) this.initModules(options);
     // init mutations
     if (options.mutations) this.initMutations(options);
-    if (options.actions) this.initActions(options.actions);
+    if (options.actions) this.initActions(options);
   }
 
   initState(options: vuexOptions) {
@@ -67,12 +67,15 @@ export class Store {
     // init in global, namespaced in itself, only effect name!
     const mutations = options.mutations;
     Object.keys(mutations).forEach(type => {
+      // register in root
       const namespaced = options.namespaced ? `${this.namespace}/${type}` : type;
       if (this.isRoot) {
         rootStore.registerMutation(namespaced, mutations[type]);
       } else {
         rootStore.registerMutation(namespaced, mutations[type], this);
       }
+      // register in local
+      this.registerMutation(type, mutations[type])
     });
   }
 
@@ -94,22 +97,38 @@ export class Store {
     }
   }
 
-  initActions(actions) {
+  initActions(options) {
+    const actions = options.actions;
     Object.keys(actions).forEach(type => {
-      this.registerActions(type, actions[type]);
+      const namespaced = options.namespaced ? `${this.namespace}/${type}` : type;
+      // strange... should use store
+      // rootStore.registerActions(namespaced, actions[type], {
+      //   commit: this.commit.bind(this)
+      // });
+      rootStore.registerActions(namespaced, actions[type], this);
     });
   }
 
-  registerActions(type, handler) {
+  public registerActions(type, handler, localStore?: Store) {
     const entry = this._actions[type] || (this._actions[type] = []);
+    const store = localStore || this;
     entry.push((payload) => {
       // state payload
-      handler.call(this, {}, payload);
+      // use store replace this for get localStore
+      handler.call(this, store, payload);
     });
   }
 
   get state() {
     return this._state;
+  }
+
+  get rootState() {
+    return rootStore.state
+  }
+
+  set rootState(val) {
+
   }
 
   set state(val) {

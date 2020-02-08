@@ -93,6 +93,11 @@ function baseModules() {
             state.count++;
           },
         },
+        actions: {
+          increment(store) {
+            store.commit('increment')
+          }
+        },
         state: {
           count: 222
         },
@@ -110,9 +115,9 @@ function baseModules() {
     },
   });
 
-  store.commit('a/increment');
+  store.dispatch('a/increment');
 
-  console.log(store); // -> 1
+  console.log(store.state); // -> 1
 }
 
 baseModules();
