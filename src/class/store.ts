@@ -4,14 +4,16 @@ import { Vue } from '../install';
 let rootStore = null;
 
 export class Store {
-  private _state: any;
   private _mutations = Object.create(null);
   private _actions = Object.create(null);
-  private _modules = Object.create(null);
+  public _modules = Object.create(null);
+  public getters = Object.create(null);
   public $parent;
   public namespace;
   public namespaceKey;
   public isRoot: boolean = false;
+  private _vm: any;
+  private _computed = {};
 
   constructor(options: vuexOptions, parentStore?: Store, namespaceKey?: string) {
     rootStore = rootStore || this;
@@ -25,23 +27,50 @@ export class Store {
       this.isRoot = true;
     }
     // vue.use(vuex) must call
-    // 强耦合了vue
+    // 强耦合了vue,比如getters要用computed实现
     // the root of state, current state
+    // init getters
+    if (options.getters) this.initGetters(options);
     if (options.state) this.initState(options);
     // initModules
     if (options.modules) this.initModules(options);
     // init mutations
     if (options.mutations) this.initMutations(options);
+    // init actions
     if (options.actions) this.initActions(options);
+  }
+
+  // getters don't support dynamic register
+  initGetters(options: vuexOptions) {
+    const getters = options.getters;
+    const store = this;
+    Object.keys(getters).forEach(key => {
+      const rawGetter = getters[key];
+      // init computed for vm
+      this._computed[key] = () => {
+        return rawGetter(this.state);
+      };
+      // define getters to visit in global, but vm in local
+      Object.defineProperty(rootStore.getters, key, {
+        get(): any {
+          return store._vm[key];
+        },
+      });
+    });
   }
 
   initState(options: vuexOptions) {
     const state = options.state;
-    // 使用observable替换vm
+    // 使用observable替换vm(又换回来了)
     // localState
-    this._state = Vue.observable(state);
+    this._vm = new Vue({
+      data: {
+        $$state: state,
+      },
+      computed: this._computed,
+    });
     if (!this.isRoot) {
-      Vue.set(this.$parent.state, this.namespaceKey, this._state);
+      Vue.set(this.$parent.state, this.namespaceKey, this.state);
     }
   }
 
@@ -75,7 +104,7 @@ export class Store {
         rootStore.registerMutation(namespaced, mutations[type], this);
       }
       // register in local
-      this.registerMutation(type, mutations[type])
+      this.registerMutation(type, mutations[type]);
     });
   }
 
@@ -120,11 +149,11 @@ export class Store {
   }
 
   get state() {
-    return this._state;
+    return this._vm._data.$$state;
   }
 
   get rootState() {
-    return rootStore.state
+    return rootStore.state;
   }
 
   set rootState(val) {

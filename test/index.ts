@@ -120,5 +120,47 @@ function baseModules() {
   console.log(store.state); // -> 1
 }
 
-baseModules();
+function baseGetters() {
+  const store = new Vuex.Store({
+    modules: {
+      a: {
+        namespaced: true,
+        mutations: {
+          increment(state) {
+            // local state
+            state.count++;
+          },
+        },
+        actions: {
+          increment(store) {
+            store.commit('increment')
+          }
+        },
+        getters: {
+          test: (state) => {
+            return state.count
+          }
+        },
+        state: {
+          count: 222
+        },
+        modules: {
+          b: {
+            state: {
+              count: 333
+            }
+          }
+        }
+      },
+    },
+    state: {
+      count: 0,
+    },
+  });
+
+  store.dispatch('a/increment');
+  console.log(store.getters.test);
+}
+
+baseGetters();
 

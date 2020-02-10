@@ -5,8 +5,5 @@ export interface vuexOptions {
   actions?: any
   modules?: any
   namespaced?: boolean
-
-  vue?: any
-
-  _parentState?: any
+  getters?: any
 }
