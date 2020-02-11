@@ -159,7 +159,7 @@ function baseGetters() {
   });
 
   store.dispatch('a/increment');
-  console.log(store.getters.test);
+  console.log(store.getters['a/test']);
 }
 
 baseGetters();

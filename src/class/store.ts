@@ -51,7 +51,8 @@ export class Store {
         return rawGetter(this.state);
       };
       // define getters to visit in global, but vm in local
-      Object.defineProperty(rootStore.getters, key, {
+      const _key = options.namespaced ? `${this.namespaceKey}/${key}`: key
+      Object.defineProperty(rootStore.getters, _key, {
         get(): any {
           return store._vm[key];
         },
