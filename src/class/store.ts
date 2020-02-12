@@ -14,6 +14,7 @@ export class Store {
   public isRoot: boolean = false;
   private _vm: any;
   private _computed = {};
+  private _subscribers = [];
 
   constructor(options: vuexOptions, parentStore?: Store, namespaceKey?: string) {
     rootStore = rootStore || this;
@@ -38,6 +39,26 @@ export class Store {
     if (options.mutations) this.initMutations(options);
     // init actions
     if (options.actions) this.initActions(options);
+    // init plugins
+    if (options.plugins) this.initPlugins(options);
+  }
+
+  initPlugins(options: vuexOptions) {
+    const plugins = options.plugins;
+    plugins.forEach(plugin => plugin(this));
+  }
+
+  subscribe(fn) {
+    const subs = this._subscribers;
+    if (subs.indexOf(fn) < 0) {
+      subs.push(fn);
+    }
+    return () => {
+      const i = subs.indexOf(fn);
+      if (i > -1) {
+        subs.splice(i, 1);
+      }
+    };
   }
 
   // getters don't support dynamic register
@@ -51,7 +72,7 @@ export class Store {
         return rawGetter(this.state);
       };
       // define getters to visit in global, but vm in local
-      const _key = options.namespaced ? `${this.namespaceKey}/${key}`: key
+      const _key = options.namespaced ? `${this.namespaceKey}/${key}` : key;
       Object.defineProperty(rootStore.getters, _key, {
         get(): any {
           return store._vm[key];
@@ -114,6 +135,8 @@ export class Store {
     entry.push((payload) => {
       // state payload
       handler.call(this, localStore ? localStore.state : this.state, payload);
+      // just invoke local
+      this._subscribers.forEach(sub => sub({ type, handler }, this.state));
     });
   }
 

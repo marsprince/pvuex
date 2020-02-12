@@ -6,4 +6,5 @@ export interface vuexOptions {
   modules?: any
   namespaced?: boolean
   getters?: any
+  plugins?: any
 }
