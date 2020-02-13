@@ -1,6 +1,7 @@
 import Vuex from '../src';
 // import Vuex from 'vuex'
 import Vue from 'vue/dist/vue';
+import { mapState } from '../src/class/map';
 
 Vue.use(Vuex);
 
@@ -171,5 +172,39 @@ function baseGetters() {
   console.log(store.getters['a/test']);
 }
 
-baseGetters();
+function baseMapFunction() {
+  const store = new Vuex.Store({
+    state: {
+      count: 0,
+    },
+    mutations: {
+      increment: state => state.count++,
+      decrement: state => state.count--,
+    },
+  });
+  new Vue({
+    el: '#app',
+    store,
+    template: '<div id="app">\n' +
+      '  <p>{{ count }}</p>\n' +
+      '  <p>\n' +
+      '    <button @click="increment">+</button>\n' +
+      '    <button @click="decrement">-</button>\n' +
+      '  </p>\n' +
+      '</div>',
+    computed: mapState({
+      // 箭头函数可使代码更简练
+      count: state => state.count,
+    }),
+    methods: {
+      increment() {
+        this.$store.commit('increment');
+      },
+      decrement() {
+        this.$store.commit('decrement');
+      },
+    },
+  });
+}
+baseMapFunction();
 

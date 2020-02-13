@@ -124,9 +124,9 @@ export class Store {
         rootStore.registerMutation(namespaced, mutations[type]);
       } else {
         rootStore.registerMutation(namespaced, mutations[type], this);
+        // register in local
+        this.registerMutation(type, mutations[type]);
       }
-      // register in local
-      this.registerMutation(type, mutations[type]);
     });
   }
 
